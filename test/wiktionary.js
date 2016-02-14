@@ -5,7 +5,7 @@
 var should = require('should');
 var bunyan = require('bunyan');
 process.env.NODE_ENV = 'test';
-var wiktionary = require('../index');
+var wiktionary = require('../index')();
 
 describe('Wiktionary tests', function () {
   this.slow(2000);
