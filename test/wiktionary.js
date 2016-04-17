@@ -11,7 +11,16 @@ describe('Wiktionary tests', function () {
   this.slow(2000);
   this.timeout(15000);
 
-  it('should get Finnish terms for "don\'t" (en)', function (done) {
+  it('should get Finnish terms for "bear" (en)', function (done) {
+    wiktionary.getDefinition('bear', 'en', 'fi', function (terms, err) {
+      terms.should.have.length(2);
+      terms[0].should.equal('älä');
+      terms[1].should.equal('älkää');
+      done();
+    });
+  });
+
+  /*it('should get Finnish terms for "don\'t" (en)', function (done) {
     wiktionary.getDefinition('don\'t', 'en', 'fi', function (terms, err) {
       terms.should.have.length(2);
       terms[0].should.equal('älä');
@@ -212,5 +221,5 @@ describe('Wiktionary tests', function () {
       terms[2].should.equal('Vaterland 中');
       done();
     });
-  });
+  });*/
 });

@@ -44,7 +44,7 @@ module.exports = function (moduleOptions) {
           encodeURIComponent(word)
       }
       getWiktionaryResponse(options, fromLang, toLang, done, function (description) {
-        if (description === 'no hits') {
+        if (description === 'no hits' && word.toLowerCase() === word) {
           // retry with lowercase search word
           options.url = 'https://' + fromLang +
             '.wiktionary.org/w/api.php?format=json&action=query&rvprop=content&prop=revisions&redirects=1&titles=' +
@@ -117,6 +117,7 @@ module.exports = function (moduleOptions) {
           originalTerms = text.split(';');
         } else {
           originalTerms = text.split('}},');
+          console.dir(originalTerms)
         }
         for (var j = 0; j < originalTerms.length; j++) {
           var term = originalTerms[j].trim();
