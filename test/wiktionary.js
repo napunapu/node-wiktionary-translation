@@ -32,6 +32,18 @@ describe('Wiktionary tests', function () {
     });
   });
 
+  it('should get Finnish terms for "Harbour" (en)', function (done) {
+    wiktionary.getDefinition('Harbour', 'en', 'fi', function (terms, err) {
+      terms.should.have.length(5);
+      terms[0].should.equal('turvapaikka');
+      terms[1].should.equal('turvasatama');
+      terms[2].should.equal('satama');
+      terms[3].should.equal('suojella');
+      terms[4].should.equal('tarjota suojapaikka');
+      done();
+    });
+  });
+
   it('should get Finnish terms for "harbor" (en)', function (done) {
     wiktionary.getDefinition('harbor', 'en', 'fi', function (terms, err) {
       terms.should.have.length(3);
