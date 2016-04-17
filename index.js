@@ -44,7 +44,7 @@ module.exports = function (moduleOptions) {
           encodeURIComponent(word)
       }
       getWiktionaryResponse(options, fromLang, toLang, done, function (description) {
-        if (description === 'no hits' && word.toLowerCase() === word) {
+        if (description === 'no hits' && word.toLowerCase() !== word) {
           // retry with lowercase search word
           options.url = 'https://' + fromLang +
             '.wiktionary.org/w/api.php?format=json&action=query&rvprop=content&prop=revisions&redirects=1&titles=' +
@@ -117,7 +117,6 @@ module.exports = function (moduleOptions) {
           originalTerms = text.split(';');
         } else {
           originalTerms = text.split('}},');
-          console.dir(originalTerms)
         }
         for (var j = 0; j < originalTerms.length; j++) {
           var term = originalTerms[j].trim();
@@ -142,6 +141,10 @@ module.exports = function (moduleOptions) {
                 term = term.split('|')[2].replace('}}', '');
               }
             } else {
+              // e.g. {{t|fi|[[antaa]] [[todistus]]}}
+              if (term.indexOf('{{t|') !== -1) {
+                term = term.split('|')[2].replace('}}', '');
+              }
               // e.g. [[hautoa]] [[mieless\u00e4]][[-\u00e4n|\u00e4n]]
               term = term.split('|')[0];
               term = term.replace('[[-', '');
