@@ -32,39 +32,44 @@ describe('Wiktionary tests', function () {
 
   it('should get Finnish terms for "harbour" (en)', function (done) {
     wiktionary.getDefinition('harbour', 'en', 'fi', function (terms, err) {
-      terms.should.have.length(5);
+      terms.should.have.length(6);
       terms[0].should.equal('turvapaikka');
       terms[1].should.equal('turvasatama');
       terms[2].should.equal('satama');
       terms[3].should.equal('suojella');
-      terms[4].should.equal('tarjota suojapaikka');
+      terms[4].should.equal('tarjota suojapaikka / antaa suojapaikka');
+      terms[5].should.equal('hautoa mielessään');
       done();
     });
   });
 
   it('should get Finnish terms for "Harbour" (en)', function (done) {
     wiktionary.getDefinition('Harbour', 'en', 'fi', function (terms, err) {
-      terms.should.have.length(5);
+      terms.should.have.length(6);
       terms[0].should.equal('turvapaikka');
       terms[1].should.equal('turvasatama');
       terms[2].should.equal('satama');
       terms[3].should.equal('suojella');
-      terms[4].should.equal('tarjota suojapaikka');
+      terms[4].should.equal('tarjota suojapaikka / antaa suojapaikka');
+      terms[5].should.equal('hautoa mielessään');
       done();
     });
   });
 
   it('should get Finnish terms for "harbor" (en)', function (done) {
     wiktionary.getDefinition('harbor', 'en', 'fi', function (terms, err) {
-      terms.should.have.length(3);
-      terms[0].should.equal('suojella');
-      terms[1].should.equal('antaa suojapaikka');
-      terms[2].should.equal('hautoa mielessään');
+      terms.should.have.length(6);
+      terms[0].should.equal('turvapaikka');
+      terms[1].should.equal('turvasatama');
+      terms[2].should.equal('satama');
+      terms[3].should.equal('suojella');
+      terms[4].should.equal('tarjota suojapaikka / antaa suojapaikka');
+      terms[5].should.equal('hautoa mielessään');
       done();
     });
   });
 
-  it('should get a Finnish terms for "breach" (en)', function (done) {
+  it('should get Finnish terms for "breach" (en)', function (done) {
     wiktionary.getDefinition('breach', 'en', 'fi', function (terms, err) {
       terms.should.have.length(11);
       terms[0].should.equal('murros');
@@ -74,9 +79,11 @@ describe('Wiktionary tests', function () {
     });
   });
 
-  it('should get no Italian terms for "harbor" (en)', function (done) {
+  it('should get Italian terms for "harbor" (en)', function (done) {
     wiktionary.getDefinition('harbor', 'en', 'it', function (terms, err) {
-      should.equal(terms, null);
+      terms.should.have.length(2);
+      terms[0].should.equal('porto');
+      terms[1].should.equal('rifugiare');
       done();
     });
   });
