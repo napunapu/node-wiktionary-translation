@@ -107,6 +107,8 @@ module.exports = function (moduleOptions) {
         search = '|' + toLang + '|';
       } else if (fromLang === 'zh') {
         search = '*' + toLangAsWord(fromLang, toLang) + '\uff1a';
+      } else if (fromLang === 'en' && toLang === 'zh') {
+        search = toLangAsWord(fromLang, toLang) + ':\n*: Mandarin: ';
       } else {
         search = toLangAsWord(fromLang, toLang) + ': ';
       }

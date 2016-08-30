@@ -230,4 +230,14 @@ describe('Wiktionary tests', function () {
       done();
     });
   });
+
+  it('should get Chinese terms for "market" (en)', function (done) {
+    wiktionary.getDefinition('market', 'en', 'zh', function (terms, err) {
+      terms.should.have.length(3);
+      terms[0].should.equal('市場');
+      terms[1].should.equal('市场');
+      terms[2].should.equal('巴扎');
+      done();
+    });
+  });
 });
