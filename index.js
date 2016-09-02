@@ -43,12 +43,28 @@ module.exports = function (moduleOptions) {
           '.wiktionary.org/w/api.php?format=json&action=query&rvprop=content&prop=revisions&redirects=1&titles=' +
           encodeURIComponent(word)
       }
-      getWiktionaryResponse(options, fromLang, toLang, done, function (description) {
+      getWiktionaryResponse(options, fromLang, toLang, done, function (description, transSee) {
         if (description === 'no hits' && word.toLowerCase() !== word) {
           // retry with lowercase search word
           options.url = 'https://' + fromLang +
             '.wiktionary.org/w/api.php?format=json&action=query&rvprop=content&prop=revisions&redirects=1&titles=' +
             encodeURIComponent(word.toLowerCase());
+          getWiktionaryResponse(options, fromLang, toLang, done, function (description, transSee) {
+            if (description === 'no hits') {
+              done(null);
+            } else if (description === 'trans-see' && transSee) {
+              options.url = 'https://' + fromLang +
+                '.wiktionary.org/w/api.php?format=json&action=query&rvprop=content&prop=revisions&redirects=1&titles=' + transSee;
+              getWiktionaryResponse(options, fromLang, toLang, done, function (description) {
+                if (description === 'no hits') {
+                  done(null);
+                }
+              });
+            }
+          });
+        } else if (description === 'trans-see' && transSee) {
+          options.url = 'https://' + fromLang +
+            '.wiktionary.org/w/api.php?format=json&action=query&rvprop=content&prop=revisions&redirects=1&titles=' + transSee;
           getWiktionaryResponse(options, fromLang, toLang, done, function (description) {
             if (description === 'no hits') {
               done(null);
@@ -66,7 +82,7 @@ module.exports = function (moduleOptions) {
         if (pages[-1] && typeof pages[-1].missing !== 'undefined' && pages[-1].missing === '') {
           return retryFunction('no hits');
         }
-        clearWiktionaryContent(pages, fromLang, toLang, done);
+        clearWiktionaryContent(pages, fromLang, toLang, done, retryFunction);
       } else {
         logger.error('error in getting word from Wiktionary', error);
         done(null, error);
@@ -74,7 +90,7 @@ module.exports = function (moduleOptions) {
     });
   }
 
-  function clearWiktionaryContent(pages, fromLang, toLang, done) {
+  function clearWiktionaryContent(pages, fromLang, toLang, done, retryFunction) {
     for (var pageId in pages) {
       if (!pages[pageId].revisions) {
         continue;
@@ -91,6 +107,8 @@ module.exports = function (moduleOptions) {
         search = '|' + toLang + '|';
       } else if (fromLang === 'zh') {
         search = '*' + toLangAsWord(fromLang, toLang) + '\uff1a';
+      } else if (fromLang === 'en' && toLang === 'zh') {
+        search = toLangAsWord(fromLang, toLang) + ':\n*: Mandarin: ';
       } else {
         search = toLangAsWord(fromLang, toLang) + ': ';
       }
@@ -159,12 +177,22 @@ module.exports = function (moduleOptions) {
           cleanedTerms.add(term);
         }
       }
+
+      if (cleanedTerms && cleanedTerms.size) {
+        done(Array.from(cleanedTerms));
+      } else {
+        // search for trans-see if translation exists for alternate word
+        search = '{{trans-see|';
+        texts = rawAnswer.split(search);
+        if (texts.length > 1) {
+          var transSee = texts[1].split('}}')[0];
+          retryFunction('trans-see', transSee);
+        } else {
+          done(null);
+        }
+      }
+
       break;
-    }
-    if (cleanedTerms && cleanedTerms.size) {
-      done(Array.from(cleanedTerms));
-    } else {
-      done(null);
     }
   }
 
